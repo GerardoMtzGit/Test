@@ -3,8 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Elements
   const tabGoogleSheetsBtn = document.getElementById('tab-google-sheets-btn');
   const tabLocalViewerBtn = document.getElementById('tab-local-viewer-btn');
+  const tabProcedureBtn = document.getElementById('tab-procedure-btn');
   const tabGoogleSheetsContent = document.getElementById('tab-google-sheets-content');
   const tabLocalViewerContent = document.getElementById('tab-local-viewer-content');
+  const tabProcedureContent = document.getElementById('tab-procedure-content');
 
   // Embed elements
   const sheetsUrlInput = document.getElementById('sheets-url-input');
@@ -43,24 +45,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 1. Tab Switching
   function switchTab(target) {
+    tabGoogleSheetsBtn.classList.remove('active');
+    tabLocalViewerBtn.classList.remove('active');
+    if (tabProcedureBtn) tabProcedureBtn.classList.remove('active');
+
+    tabGoogleSheetsContent.style.display = 'none';
+    tabLocalViewerContent.style.display = 'none';
+    if (tabProcedureContent) tabProcedureContent.style.display = 'none';
+
     if (target === 'sheets') {
       tabGoogleSheetsBtn.classList.add('active');
-      tabLocalViewerBtn.classList.remove('active');
       tabGoogleSheetsContent.style.display = 'block';
-      tabLocalViewerContent.style.display = 'none';
-    } else {
+    } else if (target === 'local') {
       tabLocalViewerBtn.classList.add('active');
-      tabGoogleSheetsBtn.classList.remove('active');
       tabLocalViewerContent.style.display = 'block';
-      tabGoogleSheetsContent.style.display = 'none';
       if (!sheetsTabsList.hasChildNodes()) {
         loadSummary();
       }
+    } else if (target === 'procedure') {
+      if (tabProcedureBtn) tabProcedureBtn.classList.add('active');
+      if (tabProcedureContent) tabProcedureContent.style.display = 'block';
     }
   }
 
   tabGoogleSheetsBtn.addEventListener('click', () => switchTab('sheets'));
   tabLocalViewerBtn.addEventListener('click', () => switchTab('local'));
+  if (tabProcedureBtn) {
+    tabProcedureBtn.addEventListener('click', () => switchTab('procedure'));
+  }
 
   // 2. Google Sheets URL Converter & Loader
   function formatSheetsEmbedUrl(rawUrl, mode = 'preview') {

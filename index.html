@@ -159,6 +159,13 @@
             </svg>
             Visor Interactivo de Hojas (.xlsx)
           </button>
+          <button class="tab-btn" id="tab-procedure-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            Metodología y Procedimiento Paso a Paso
+          </button>
         </div>
       </section>
 
@@ -267,6 +274,238 @@
               <thead id="table-head"></thead>
               <tbody id="table-body"></tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: Complete Step-by-Step Procedure & Business Logic -->
+      <section class="tab-content" id="tab-procedure-content" style="display: none;">
+        <div class="card glass-card procedure-container">
+          <div class="procedure-header">
+            <div class="badge-tag">
+              <span class="sparkle">🎓</span> Guía Maestra del Analista Comercial
+            </div>
+            <h2 class="procedure-title">Procedimiento Paso a Paso y Lógica de Negocio</h2>
+            <p class="procedure-subtitle">
+              Cómo pasamos de datos transaccionales brutos a recomendaciones estratégicas de alto impacto para la Dirección Comercial de Walmart.
+            </p>
+          </div>
+
+          <!-- Step 1 -->
+          <div class="procedure-step-card" id="proc-step-1">
+            <div class="step-badge-col">
+              <span class="step-number">01</span>
+            </div>
+            <div class="step-body-col">
+              <div class="step-header">
+                <span class="step-tag green">Preparación de Datos</span>
+                <h3 class="step-heading">Delimitación del Universo de Análisis (Filtro 2012)</h3>
+              </div>
+              <p class="step-desc">
+                La tabla original <code>raw_ventas</code> contiene <strong>95,880 filas</strong> que abarcan tres años (2010, 2011 y 2012). Filtramos exclusivamente las semanas correspondientes al año <strong>2012</strong>, reduciendo el universo a <strong>28,845 transacciones semanales</strong> con una facturación neta de <strong>$558,411,520.58 USD</strong>.
+              </p>
+              <div class="formula-box">
+                <span class="formula-label">Fórmula en Google Sheets / Excel:</span>
+                <code>=FILTER(raw_ventas!A2:F95881, IZQUIERDA(raw_ventas!F2:F95881, 4)="2012")</code>
+              </div>
+              <div class="callout-box info">
+                <strong>🧠 ¿Por qué se hizo esto? (Lógica de Negocio):</strong>
+                La Dirección Comercial necesita planificar el presupuesto e inventario del <em>próximo año fiscal</em>. Mezclar datos de 2010 o 2011 incluiría patrones de consumo antiguos y tiendas en etapa preoperativa, desvirtuando la fotografía actual del negocio.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="procedure-step-card" id="proc-step-2">
+            <div class="step-badge-col">
+              <span class="step-number">02</span>
+            </div>
+            <div class="step-body-col">
+              <div class="step-header">
+                <span class="step-tag cyan">Modelado Relacional</span>
+                <h3 class="step-heading">Cruce y Enriquecimiento de Tablas (Creación de clean_ventas)</h3>
+              </div>
+              <p class="step-desc">
+                Las bases transaccionales solo almacenan IDs numéricos (<code>tienda: 1</code>, <code>dept: 3</code>) para optimizar memoria. Para que los datos sean interpretables por los stakeholders, cruzamos las transacciones con las tablas maestras (lookups):
+              </p>
+              <ul class="step-bullets">
+                <li><strong>Nombre del Departamento:</strong> Obtenido desde <code>raw_departamento</code> mediante la llave <code>dept</code>.</li>
+                <li><strong>Tipo de Tienda (A/B/C) y Metros Cuadrados:</strong> Obtenidos desde <code>raw_tiendas</code> mediante la llave <code>tienda</code>.</li>
+              </ul>
+              <div class="formula-box">
+                <span class="formula-label">Fórmulas en clean_ventas:</span>
+                <code>nombre_dept: =SI.ERROR(BUSCARV(D2, raw_departamento!A:B, 2, FALSO), "Depto 16 (Sin Asignar)")</code><br>
+                <code>tipo_tienda: =BUSCARV(A2, raw_tiendas!A:C, 2, FALSO)</code><br>
+                <code>tamaño_m2: =BUSCARV(A2, raw_tiendas!A:C, 3, FALSO)</code>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="procedure-step-card" id="proc-step-3">
+            <div class="step-badge-col">
+              <span class="step-number">03</span>
+            </div>
+            <div class="step-body-col">
+              <div class="step-header">
+                <span class="step-tag purple">Calidad & Control</span>
+                <h3 class="step-heading">Auditoría de Calidad (QA Checks) y Trampas Ocultas del Dataset</h3>
+              </div>
+              <p class="step-desc">
+                Un buen analista audita los datos antes de emitir métricas para prevenir el efecto <em>Garbage In, Garbage Out</em>. Detectamos y resolvimos 3 anomalías críticas:
+              </p>
+              <div class="qa-grid">
+                <div class="qa-card">
+                  <div class="qa-title">⚠️ 10 Ventas Negativas</div>
+                  <p class="qa-text">En retail corresponden a <strong>devoluciones de clientes</strong> o ajustes contables (rango de -$3.82 a -$771.90). <strong>No se deben borrar</strong>, porque la Dirección evalúa la <em>Venta Neta</em> (Ventas Brutas menos Devoluciones). Borrarlas inflaría falsamente los ingresos.</p>
+                </div>
+                <div class="qa-card">
+                  <div class="qa-title">🔍 Departamento 16 sin Catálogo</div>
+                  <p class="qa-text">Existen 6,435 transacciones históricas (y $29.4M en 2012) pertenecientes al Depto 16, el cual no está en <code>raw_departamento</code>. Un error de principiante sería borrar estas filas con <code>#N/A</code>; hacerlo extraviaría el <strong>5.27%</strong> de todo el dinero de la empresa. Se etiquetó como <em>Depto 16 (Sin Asignar)</em>.</p>
+                </div>
+                <div class="qa-card">
+                  <div class="qa-title">📐 Integridad de Metros Cuadrados</div>
+                  <p class="qa-text">Se verificó que ninguna de las 45 tiendas tuviera tamaño igual a 0 o celda vacía, asegurando que el cálculo de eficiencia ($/m²) no genere errores de división por cero (<code>#¡DIV/0!</code>).</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="procedure-step-card" id="proc-step-4">
+            <div class="step-badge-col">
+              <span class="step-number">04</span>
+            </div>
+            <div class="step-body-col">
+              <div class="step-header">
+                <span class="step-tag yellow">KPI de Eficiencia</span>
+                <h3 class="step-heading">Pregunta 1: Eficiencia por Metro Cuadrado (Ventas / Superficie)</h3>
+              </div>
+              <p class="step-desc">
+                Evaluamos el rendimiento del espacio físico: ¿Qué formato de tienda convierte mejor cada metro cuadrado construido en ventas reales?
+              </p>
+              <div class="formula-box">
+                <span class="formula-label">Fórmula Matemática:</span>
+                <code>Eficiencia ($/m²) = Ventas Totales del Formato / Área Total en m² del Formato</code>
+              </div>
+              <div class="results-table-wrapper">
+                <table class="procedure-table">
+                  <thead>
+                    <tr>
+                      <th>Formato</th>
+                      <th>N° Tiendas</th>
+                      <th>Ventas 2012</th>
+                      <th>Superficie Total</th>
+                      <th>Eficiencia ($/m²)</th>
+                      <th>Evaluación</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="highlight-row">
+                      <td><strong>Tipo B (Medianas)</strong></td>
+                      <td>17</td>
+                      <td>$204,378,156.40</td>
+                      <td>1,720,242 m²</td>
+                      <td><strong>$118.81 / m²</strong></td>
+                      <td><span class="badge-win">Ganador (+37.9% vs Tipo A)</span></td>
+                    </tr>
+                    <tr>
+                      <td>Tipo A (Grandes)</td>
+                      <td>22</td>
+                      <td>$335,957,905.20</td>
+                      <td>3,899,450 m²</td>
+                      <td>$86.16 / m²</td>
+                      <td>Rendimiento medio / Pasillos ociosos</td>
+                    </tr>
+                    <tr>
+                      <td>Tipo C (Pequeñas)</td>
+                      <td>6</td>
+                      <td>$18,075,458.98</td>
+                      <td>243,250 m²</td>
+                      <td>$74.31 / m²</td>
+                      <td>Baja escala / Menor rotación</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="callout-box info">
+                <strong>🧠 ¿Por qué gana el Tipo B? (Ley de Rendimientos Decrecientes):</strong>
+                Las tiendas Tipo A (177,000 m² prom.) tienen pasillos gigantescos y metros ociosos que pagan luz, renta y mantenimiento sin aportar venta. El Tipo B (101,000 m² prom.) tiene el tamaño ideal: elimina el espacio muerto y concentra mercancía de alta rotación.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="procedure-step-card" id="proc-step-5">
+            <div class="step-badge-col">
+              <span class="step-number">05</span>
+            </div>
+            <div class="step-body-col">
+              <div class="step-header">
+                <span class="step-tag green">KPI de Volumen</span>
+                <h3 class="step-heading">Pregunta 2: Participación de Departamentos (Ley 80/20 de Pareto)</h3>
+              </div>
+              <p class="step-desc">
+                Calculamos el peso relativo de cada categoría sobre la facturación global de 2012 ($558,411,520 USD) para identificar qué departamentos sostienen a la empresa y cuáles son candidatos a recorte.
+              </p>
+              <div class="formula-box">
+                <span class="formula-label">Fórmula:</span>
+                <code>Participación (%) = (Ventas del Departamento / $558,411,520.58) * 100</code>
+              </div>
+              <div class="split-insights-grid">
+                <div class="insight-column good">
+                  <h4>🚀 Motores de Ingreso (Top 4 = 45.56% de las ventas)</h4>
+                  <ul>
+                    <li><strong>Despensa y Básicos:</strong> $85.05M (15.23%) — El pilar indiscutible.</li>
+                    <li><strong>Comida Fresca:</strong> $59.51M (10.66%) — Frecuencia y fidelidad.</li>
+                    <li><strong>Artículos del Hogar y Papel:</strong> $58.88M (10.54%) — Compra recurrente.</li>
+                    <li><strong>Salud y Bienestar:</strong> $51.00M (9.13%) — Ticket estable y margen alto.</li>
+                  </ul>
+                  <p class="mini-note">Son bienes de consumo masivo (FMCG). La gente va a Walmart semanalmente por ellos.</p>
+                </div>
+                <div class="insight-column bad">
+                  <h4>⚠️ Departamentos Bajo Potencial (Underperformers)</h4>
+                  <ul>
+                    <li><strong>Jardín y Vida al Aire Libre:</strong> $5.96M (1.07%) — Volumen mínimo.</li>
+                    <li><strong>Oficina y Escuela:</strong> $8.19M (1.47%) — Compra ultra estacional.</li>
+                    <li><strong>Juguetes y Juegos:</strong> $23.78M (4.26%) — Solo genera retorno en Q4 (Navidad).</li>
+                  </ul>
+                  <p class="mini-note">Tener estanterías completas de jardín o papelería todo el año genera inventario estancado.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 6 -->
+          <div class="procedure-step-card" id="proc-step-6">
+            <div class="step-badge-col">
+              <span class="step-number">06</span>
+            </div>
+            <div class="step-body-col">
+              <div class="step-header">
+                <span class="step-tag cyan">Storytelling Ejecutivo</span>
+                <h3 class="step-heading">El Método C-F-I (Context → Finding → Implication)</h3>
+              </div>
+              <p class="step-desc">
+                Los ejecutivos no tienen tiempo de revisar hojas de cálculo complejas. La metodología C-F-I traduce datos técnicos a decisiones directivas:
+              </p>
+              <div class="cfi-container">
+                <div class="cfi-block">
+                  <div class="cfi-badge c">C · Contexto</div>
+                  <p>Dónde estamos parados con datos objetivos y neutrales.</p>
+                </div>
+                <div class="cfi-arrow">➔</div>
+                <div class="cfi-block">
+                  <div class="cfi-badge f">F · Finding (Hallazgo)</div>
+                  <p>El dato duro revelador que descubriste tras limpiar y cruzar los datos.</p>
+                </div>
+                <div class="cfi-arrow">➔</div>
+                <div class="cfi-block">
+                  <div class="cfi-badge i">I · Implicación</div>
+                  <p>La recomendación comercial concreta: qué hacer con el presupuesto y el inventario.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
