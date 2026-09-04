@@ -173,9 +173,13 @@
                   type="text"
                   id="sheets-url-input"
                   class="sheets-input"
-                  placeholder="Pega aquí el enlace de Google Sheets (ej: https://docs.google.com/spreadsheets/d/.../pubhtml)"
-                  value="https://docs.google.com/spreadsheets/d/e/2PACX-1vT17xH_8Q1xJ8pYdO8aN9Z_sample_walmart/pubhtml?widget=true&headers=false"
+                  placeholder="Pega aquí el enlace de Google Sheets (ej: https://docs.google.com/spreadsheets/d/.../edit)"
+                  value="https://docs.google.com/spreadsheets/d/1-JNjMP1YLM7j62EP5CnoK9nCSlviRMOpdP-RzZEX3hM/preview?gid=1109659363"
                 />
+                <select id="sheets-mode-select" class="sheets-select" title="Modo de incrustación">
+                  <option value="preview" selected>Modo Vista Previa (/preview)</option>
+                  <option value="pubhtml">Modo Publicado (/pubhtml)</option>
+                </select>
                 <button class="btn btn-action" id="btn-apply-sheet-url">
                   Cargar Hoja
                 </button>
@@ -183,7 +187,7 @@
             </div>
             <div class="embed-toolbar-right">
               <button class="btn btn-secondary" id="btn-toggle-instructions">
-                ❓ Guía de Embebido
+                ❓ Guía / Solución Error
               </button>
               <button class="btn btn-secondary" id="btn-fullscreen-embed" title="Pantalla Completa">
                 ⛶ Expandir
@@ -194,20 +198,19 @@
           <!-- Quick instructions dropdown -->
           <div class="instructions-panel" id="instructions-panel">
             <div class="instructions-header">
-              <h3>Cómo publicar tu archivo Excel en Google Sheets:</h3>
+              <h3>¿Por qué aparece "Lo sentimos, pero este documento no se ha publicado"?</h3>
             </div>
+            <p style="margin-bottom: 12px; font-size: 0.9rem; color: #e2e8f0;">
+              Google Sheets tiene dos formas de mostrarse embebido:
+            </p>
             <ol class="instructions-list">
               <li>
-                <strong>Abre Google Sheets:</strong> Haz clic en el botón <a href="https://sheets.new" target="_blank">"Abrir en Google Sheets"</a> o ve a <a href="https://sheets.new" target="_blank">sheets.new</a>.
+                <strong>Opción 1 - Modo Vista Previa (/preview) (Recomendado):</strong> 
+                No requiere publicar nada. Solo asegúrate de que el documento esté compartido con <em>"Cualquier persona que tenga el vínculo"</em> o ten tu cuenta de Google abierta en este navegador. Ya lo hemos activado por defecto.
               </li>
               <li>
-                <strong>Importa el Excel:</strong> Selecciona <em>Archivo > Importar > Subir</em> y arrastra el archivo <code>Proyecto 2_ Resumen Ejecutivo de Ventas Walmart.xlsx</code> que está en tu carpeta de <em>Descargas</em>.
-              </li>
-              <li>
-                <strong>Publica en la web:</strong> Ve a <em>Archivo > Compartir > Publicar en la web</em>, selecciona la pestaña <strong>"Incorporar"</strong> y copia el enlace dentro de <code>src="..."</code>.
-              </li>
-              <li>
-                <strong>Pégalo aquí:</strong> Pega el enlace en la barra superior y pulsa <strong>"Cargar Hoja"</strong> para verlo interactivo en vivo.
+                <strong>Opción 2 - Publicar formalmente en la Web (/pubhtml):</strong>
+                En tu hoja de Google Sheets ve a <em>Archivo > Compartir > Publicar en la web</em>, asegúrate de hacer clic en el botón verde <strong>"Publicar"</strong>, y selecciona <strong>Incorporar</strong>.
               </li>
             </ol>
           </div>
@@ -221,7 +224,7 @@
             <iframe
               id="google-sheets-frame"
               class="sheets-iframe"
-              src="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/pubhtml?widget=true&amp;headers=false"
+              src="https://docs.google.com/spreadsheets/d/1-JNjMP1YLM7j62EP5CnoK9nCSlviRMOpdP-RzZEX3hM/preview?gid=1109659363"
               allowfullscreen
               frameborder="0"
             ></iframe>

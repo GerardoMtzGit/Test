@@ -63,28 +63,36 @@ document.addEventListener('DOMContentLoaded', () => {
   tabLocalViewerBtn.addEventListener('click', () => switchTab('local'));
 
   // 2. Google Sheets URL Converter & Loader
-  function formatSheetsEmbedUrl(rawUrl) {
+  function formatSheetsEmbedUrl(rawUrl, mode = 'preview') {
     const trimmed = rawUrl.trim();
     if (!trimmed) return '';
 
-    // If it's already an embed/pubhtml URL
-    if (trimmed.includes('/pubhtml') || trimmed.includes('/preview') || trimmed.includes('/htmlembed')) {
-      return trimmed;
-    }
-
     // Extract sheet ID: /d/([a-zA-Z0-9_-]+)
-    const match = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (match && match[1]) {
-      const sheetId = match[1];
-      return `https://docs.google.com/spreadsheets/d/${sheetId}/pubhtml?widget=true&headers=false`;
+    const idMatch = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    // Extract gid if present
+    const gidMatch = trimmed.match(/[?&#]gid=([0-9]+)/);
+    const gid = gidMatch ? gidMatch[1] : null;
+
+    if (idMatch && idMatch[1]) {
+      const sheetId = idMatch[1];
+      if (mode === 'pubhtml' || trimmed.includes('/pubhtml')) {
+        const gidParam = gid ? `&gid=${gid}` : '';
+        return `https://docs.google.com/spreadsheets/d/${sheetId}/pubhtml?widget=true&headers=false${gidParam}`;
+      }
+      // Preview mode: Works without needing "Publicar en la web"
+      const gidParam = gid ? `?gid=${gid}` : '';
+      return `https://docs.google.com/spreadsheets/d/${sheetId}/preview${gidParam}`;
     }
 
-    // Fallback: use URL as-is
+    // If it's already an embed URL without standard /d/ pattern
     return trimmed;
   }
 
+  const sheetsModeSelect = document.getElementById('sheets-mode-select');
+
   function loadGoogleSheet(url) {
-    const embedUrl = formatSheetsEmbedUrl(url);
+    const mode = sheetsModeSelect ? sheetsModeSelect.value : 'preview';
+    const embedUrl = formatSheetsEmbedUrl(url, mode);
     if (!embedUrl) return;
 
     iframeLoading.classList.add('visible');
@@ -97,6 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       iframeLoading.classList.remove('visible');
     }, 4000);
+  }
+
+  if (sheetsModeSelect) {
+    sheetsModeSelect.addEventListener('change', () => {
+      loadGoogleSheet(sheetsUrlInput.value);
+    });
   }
 
   btnApplySheetUrl.addEventListener('click', () => {
