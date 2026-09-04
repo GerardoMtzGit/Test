@@ -1,0 +1,13 @@
+{
+  "name": "vibecode-studio",
+  "version": "1.0.0",
+  "description": "Estudio de desarrollo VibeCode",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["vibecode", "ai", "development"],
+  "author": "GerardoMtzGit",
+  "license": "MIT"
+}
