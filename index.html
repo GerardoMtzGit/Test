@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VibeCode Studio - AI Development Environment</title>
-  <meta name="description" content="Entorno de desarrollo moderno, rápido y estilizado para Vibe Coding.">
+  <title>Resumen Ejecutivo de Ventas Walmart | VibeCode Studio</title>
+  <meta name="description" content="Dashboard ejecutivo y visor de Google Sheets para el análisis de ventas de Walmart.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -21,147 +21,266 @@
       <div class="brand">
         <div class="logo-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
           </svg>
         </div>
         <div class="brand-text">
-          <span class="brand-title">VibeCode</span>
-          <span class="brand-badge">v1.0 Live</span>
+          <span class="brand-title">Walmart Analytics Studio</span>
+          <span class="brand-badge">Google Sheets Embed</span>
         </div>
       </div>
 
       <div class="server-pill">
         <span class="status-dot"></span>
-        <span class="server-status-text" id="server-status-label">Servidor Local Activo: localhost:3000</span>
+        <span class="server-status-text" id="server-status-label">Servidor en línea: localhost:3000</span>
       </div>
 
       <div class="nav-actions">
-        <button class="btn btn-secondary" id="refresh-stats-btn">
+        <a href="/api/excel/download" class="btn btn-secondary" id="btn-download-excel" title="Descargar archivo Excel original">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          Actualizar
-        </button>
+          Descargar .xlsx
+        </a>
+        <a href="https://sheets.new" target="_blank" rel="noopener noreferrer" class="btn btn-google" id="btn-open-sheets" title="Abrir Google Sheets para importar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+          </svg>
+          Abrir en Google Sheets
+        </a>
         <a href="https://github.com/GerardoMtzGit/Test" target="_blank" rel="noopener noreferrer" class="btn btn-primary" id="github-repo-link">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
           </svg>
-          Ver en GitHub
+          GitHub
         </a>
       </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- Hero Section -->
+      <!-- Title Section -->
       <section class="hero-section">
         <div class="badge-tag">
-          <span class="sparkle">✨</span> Servidor Web Inicializado con Éxito
+          <span class="sparkle">📊</span> Proyecto 2: Resumen Ejecutivo de Ventas Walmart
         </div>
         <h1 class="hero-title">
-          Tu estudio <span class="gradient-text">VibeCode</span> está corriendo.
+          Panel de Control y <span class="gradient-text">Google Sheets</span> Embebido
         </h1>
         <p class="hero-subtitle">
-          Todo listo para construir ideas a la velocidad del pensamiento. Conectado directamente a tu repositorio <code>GerardoMtzGit/Test</code>.
+          Visualiza, analiza y explora todas las tablas y KPIs del archivo Excel de Walmart sincronizado con tu entorno.
         </p>
       </section>
 
-      <!-- Stats Grid -->
-      <section class="metrics-grid">
-        <div class="metric-card" id="card-server-status">
+      <!-- KPI Cards -->
+      <section class="metrics-grid" id="metrics-container">
+        <div class="metric-card" id="kpi-sales">
           <div class="metric-header">
             <span class="metric-icon green">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 14 14"></polyline>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
               </svg>
             </span>
-            <span class="metric-badge active">Online</span>
+            <span class="metric-badge active">Ventas Totales</span>
           </div>
-          <div class="metric-value" id="uptime-value">00:00:01</div>
-          <div class="metric-label">Tiempo activo del servidor</div>
+          <div class="metric-value" id="total-sales-value">$1,912,142,474</div>
+          <div class="metric-label">Ventas semanales agregadas</div>
         </div>
 
-        <div class="metric-card" id="card-git-branch">
+        <div class="metric-card" id="kpi-records">
           <div class="metric-header">
             <span class="metric-icon purple">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="6" y1="3" x2="6" y2="15"></line>
-                <circle cx="18" cy="6" r="3"></circle>
-                <circle cx="6" cy="18" r="3"></circle>
-                <path d="M18 9a9 9 0 0 1-9 9"></path>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
               </svg>
             </span>
-            <span class="metric-badge">Git Sincronizado</span>
+            <span class="metric-badge">Registros Raw</span>
           </div>
-          <div class="metric-value">main</div>
-          <div class="metric-label">Rama activa en Test</div>
+          <div class="metric-value" id="total-records-value">95,880</div>
+          <div class="metric-label">Filas de transacciones en raw_ventas</div>
         </div>
 
-        <div class="metric-card" id="card-response-time">
+        <div class="metric-card" id="kpi-stores">
           <div class="metric-header">
             <span class="metric-icon cyan">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
               </svg>
             </span>
-            <span class="metric-badge">Ultra Rápido</span>
+            <span class="metric-badge">Sucursales</span>
           </div>
-          <div class="metric-value" id="latency-value">4 ms</div>
-          <div class="metric-label">Latencia local HTTP</div>
+          <div class="metric-value" id="total-stores-value">45 Tiendas</div>
+          <div class="metric-label">Tipos A, B y C con área en m²</div>
         </div>
 
-        <div class="metric-card" id="card-project-mode">
+        <div class="metric-card" id="kpi-top-dept">
           <div class="metric-header">
             <span class="metric-icon yellow">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="7"></circle>
+                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
               </svg>
             </span>
-            <span class="metric-badge highlight">Listo</span>
+            <span class="metric-badge highlight">Top Ventas</span>
           </div>
-          <div class="metric-value">Vibe Coding</div>
-          <div class="metric-label">Modo de desarrollo</div>
+          <div class="metric-value" id="top-dept-value">Despensa y Básicos</div>
+          <div class="metric-label" id="top-dept-sub">$280.6M (14.6% del total)</div>
         </div>
       </section>
 
-      <!-- Interactive Playground Section -->
-      <section class="interactive-section">
-        <div class="card glass-card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Consola de Comandos Rápidos</h2>
-              <p class="card-subtitle">Prueba llamadas al servidor e interactúa con el entorno.</p>
+      <!-- View Selector Tabs -->
+      <section class="tab-control-section">
+        <div class="tab-buttons-container">
+          <button class="tab-btn active" id="tab-google-sheets-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+            Embebido Google Sheets
+          </button>
+          <button class="tab-btn" id="tab-local-viewer-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            Visor Interactivo de Hojas (.xlsx)
+          </button>
+        </div>
+      </section>
+
+      <!-- TAB 1: Google Sheets Embed -->
+      <section class="tab-content" id="tab-google-sheets-content">
+        <div class="card glass-card embed-card">
+          <div class="embed-toolbar">
+            <div class="embed-toolbar-left">
+              <label for="sheets-url-input" class="input-label">URL o ID de Google Sheets:</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="sheets-url-input"
+                  class="sheets-input"
+                  placeholder="Pega aquí el enlace de Google Sheets (ej: https://docs.google.com/spreadsheets/d/.../pubhtml)"
+                  value="https://docs.google.com/spreadsheets/d/e/2PACX-1vT17xH_8Q1xJ8pYdO8aN9Z_sample_walmart/pubhtml?widget=true&headers=false"
+                />
+                <button class="btn btn-action" id="btn-apply-sheet-url">
+                  Cargar Hoja
+                </button>
+              </div>
             </div>
-            <div class="card-actions">
-              <span class="chip" id="requests-counter">Solicitudes: 1</span>
+            <div class="embed-toolbar-right">
+              <button class="btn btn-secondary" id="btn-toggle-instructions">
+                ❓ Guía de Embebido
+              </button>
+              <button class="btn btn-secondary" id="btn-fullscreen-embed" title="Pantalla Completa">
+                ⛶ Expandir
+              </button>
             </div>
           </div>
 
-          <div class="playground-body">
-            <div class="action-buttons-group">
-              <button class="btn btn-action" id="btn-ping">
-                ⚡ Probar Ping HTTP
-              </button>
-              <button class="btn btn-action" id="btn-toggle-theme">
-                🎨 Cambiar Estilo Visual
-              </button>
-              <button class="btn btn-action" id="btn-generate-snippet">
-                📝 Generar Componente
-              </button>
+          <!-- Quick instructions dropdown -->
+          <div class="instructions-panel" id="instructions-panel">
+            <div class="instructions-header">
+              <h3>Cómo publicar tu archivo Excel en Google Sheets:</h3>
             </div>
+            <ol class="instructions-list">
+              <li>
+                <strong>Abre Google Sheets:</strong> Haz clic en el botón <a href="https://sheets.new" target="_blank">"Abrir en Google Sheets"</a> o ve a <a href="https://sheets.new" target="_blank">sheets.new</a>.
+              </li>
+              <li>
+                <strong>Importa el Excel:</strong> Selecciona <em>Archivo > Importar > Subir</em> y arrastra el archivo <code>Proyecto 2_ Resumen Ejecutivo de Ventas Walmart.xlsx</code> que está en tu carpeta de <em>Descargas</em>.
+              </li>
+              <li>
+                <strong>Publica en la web:</strong> Ve a <em>Archivo > Compartir > Publicar en la web</em>, selecciona la pestaña <strong>"Incorporar"</strong> y copia el enlace dentro de <code>src="..."</code>.
+              </li>
+              <li>
+                <strong>Pégalo aquí:</strong> Pega el enlace en la barra superior y pulsa <strong>"Cargar Hoja"</strong> para verlo interactivo en vivo.
+              </li>
+            </ol>
+          </div>
 
-            <div class="terminal-box" id="terminal-output">
-              <div class="terminal-bar">
-                <span class="terminal-dot red"></span>
-                <span class="terminal-dot yellow"></span>
-                <span class="terminal-dot green"></span>
-                <span class="terminal-title">vibecode-server.log</span>
-              </div>
-              <pre class="terminal-content" id="log-text">[11:18:20] [INFO] Servidor iniciado en http://localhost:3000
-[11:18:20] [INFO] Conexión local lista. Sincronización Git enlazada.
-[11:18:20] [INFO] Presiona cualquier botón para enviar solicitudes al servidor.</pre>
+          <!-- Google Sheets Iframe Container -->
+          <div class="iframe-wrapper" id="iframe-wrapper">
+            <div class="iframe-loading-overlay" id="iframe-loading">
+              <div class="spinner"></div>
+              <span>Conectando con Google Sheets...</span>
             </div>
+            <iframe
+              id="google-sheets-frame"
+              class="sheets-iframe"
+              src="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/pubhtml?widget=true&amp;headers=false"
+              allowfullscreen
+              frameborder="0"
+            ></iframe>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: Local Interactive Viewer -->
+      <section class="tab-content" id="tab-local-viewer-content" style="display: none;">
+        <div class="card glass-card">
+          <!-- Sheet Selector Bar -->
+          <div class="sheets-nav-bar">
+            <div class="sheets-tabs-list" id="sheets-tabs-list">
+              <!-- Dynamically populated -->
+            </div>
+            <div class="sheet-search-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="sheet-search-input" placeholder="Buscar en esta hoja...">
+            </div>
+          </div>
+
+          <!-- Sheet Status & Pagination -->
+          <div class="sheet-meta-bar">
+            <div class="sheet-meta-info" id="sheet-meta-info">
+              Cargando hoja...
+            </div>
+            <div class="sheet-pagination">
+              <button class="btn btn-secondary btn-sm" id="btn-prev-page">Anterior</button>
+              <span class="page-indicator" id="page-indicator">Página 1 de 1</span>
+              <button class="btn btn-secondary btn-sm" id="btn-next-page">Siguiente</button>
+            </div>
+          </div>
+
+          <!-- Data Table Container -->
+          <div class="table-responsive-wrapper">
+            <table class="data-table" id="data-table">
+              <thead id="table-head"></thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Top Departments Breakdown Section -->
+      <section class="departments-section">
+        <div class="card glass-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Top Departamentos por Volumen de Ventas</h2>
+              <p class="card-subtitle">Distribución acumulada extraída del catálogo y registro de ventas.</p>
+            </div>
+            <div class="chip">14 Departamentos Totales</div>
+          </div>
+
+          <div class="depts-bars-container" id="depts-bars-container">
+            <!-- Dynamically populated -->
           </div>
         </div>
       </section>
@@ -169,7 +288,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-      <p>VibeCode Studio · Creado para desarrollo ágil y fluido · <a href="https://github.com/GerardoMtzGit/Test" target="_blank">GerardoMtzGit/Test</a></p>
+      <p>Walmart Analytics Studio · VibeCode Environment · Conectado a <a href="https://github.com/GerardoMtzGit/Test" target="_blank">GerardoMtzGit/Test</a></p>
     </footer>
   </div>
 

@@ -1,101 +1,301 @@
-// VibeCode Interactive Application Logic
+// Walmart Sales & Google Sheets Studio Logic
 document.addEventListener('DOMContentLoaded', () => {
-  let requestCount = 1;
-  const startTime = Date.now();
+  // Elements
+  const tabGoogleSheetsBtn = document.getElementById('tab-google-sheets-btn');
+  const tabLocalViewerBtn = document.getElementById('tab-local-viewer-btn');
+  const tabGoogleSheetsContent = document.getElementById('tab-google-sheets-content');
+  const tabLocalViewerContent = document.getElementById('tab-local-viewer-content');
 
-  const uptimeEl = document.getElementById('uptime-value');
-  const latencyEl = document.getElementById('latency-value');
-  const logTextEl = document.getElementById('log-text');
-  const requestsCounterEl = document.getElementById('requests-counter');
-  const refreshStatsBtn = document.getElementById('refresh-stats-btn');
-  const pingBtn = document.getElementById('btn-ping');
-  const themeBtn = document.getElementById('btn-toggle-theme');
-  const snippetBtn = document.getElementById('btn-generate-snippet');
+  // Embed elements
+  const sheetsUrlInput = document.getElementById('sheets-url-input');
+  const btnApplySheetUrl = document.getElementById('btn-apply-sheet-url');
+  const googleSheetsFrame = document.getElementById('google-sheets-frame');
+  const btnToggleInstructions = document.getElementById('btn-toggle-instructions');
+  const instructionsPanel = document.getElementById('instructions-panel');
+  const btnFullscreenEmbed = document.getElementById('btn-fullscreen-embed');
+  const iframeWrapper = document.getElementById('iframe-wrapper');
+  const iframeLoading = document.getElementById('iframe-loading');
 
-  // Format uptime HH:MM:SS
-  function updateUptime() {
-    const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-    const hours = String(Math.floor(elapsedSeconds / 3600)).padStart(2, '0');
-    const minutes = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, '0');
-    const seconds = String(elapsedSeconds % 60).padStart(2, '0');
-    uptimeEl.textContent = `${hours}:${minutes}:${seconds}`;
-  }
-  setInterval(updateUptime, 1000);
-  updateUptime();
+  // KPI elements
+  const totalSalesValue = document.getElementById('total-sales-value');
+  const totalRecordsValue = document.getElementById('total-records-value');
+  const totalStoresValue = document.getElementById('total-stores-value');
+  const topDeptValue = document.getElementById('top-dept-value');
+  const topDeptSub = document.getElementById('top-dept-sub');
+  const deptsBarsContainer = document.getElementById('depts-bars-container');
 
-  function appendLog(message, level = 'INFO') {
-    const time = new Date().toLocaleTimeString();
-    const newEntry = `\n[${time}] [${level}] ${message}`;
-    logTextEl.textContent += newEntry;
-    logTextEl.scrollTop = logTextEl.scrollHeight;
-  }
+  // Local table elements
+  const sheetsTabsList = document.getElementById('sheets-tabs-list');
+  const sheetSearchInput = document.getElementById('sheet-search-input');
+  const sheetMetaInfo = document.getElementById('sheet-meta-info');
+  const btnPrevPage = document.getElementById('btn-prev-page');
+  const btnNextPage = document.getElementById('btn-next-page');
+  const pageIndicator = document.getElementById('page-indicator');
+  const tableHead = document.getElementById('table-head');
+  const tableBody = document.getElementById('table-body');
 
-  function incrementRequests() {
-    requestCount++;
-    requestsCounterEl.textContent = `Solicitudes: ${requestCount}`;
-  }
+  // State
+  let currentSheet = 'raw_departamento';
+  let currentPage = 1;
+  let totalPages = 1;
+  let currentSearch = '';
+  let searchTimeout = null;
 
-  // Ping handler
-  if (pingBtn) {
-    pingBtn.addEventListener('click', async () => {
-      incrementRequests();
-      const startPing = performance.now();
-      appendLog('Enviando GET /api/healthcheck...', 'HTTP');
-      try {
-        const response = await fetch('/api/healthcheck').catch(() => null);
-        const duration = Math.round(performance.now() - startPing);
-        latencyEl.textContent = `${duration} ms`;
-        appendLog(`Respuesta recibida en ${duration}ms (Status: 200 OK)`, 'SUCCESS');
-      } catch (err) {
-        const duration = Math.round(performance.now() - startPing);
-        latencyEl.textContent = `${duration} ms`;
-        appendLog(`Respuesta local procesada en ${duration}ms`, 'SUCCESS');
+  // 1. Tab Switching
+  function switchTab(target) {
+    if (target === 'sheets') {
+      tabGoogleSheetsBtn.classList.add('active');
+      tabLocalViewerBtn.classList.remove('active');
+      tabGoogleSheetsContent.style.display = 'block';
+      tabLocalViewerContent.style.display = 'none';
+    } else {
+      tabLocalViewerBtn.classList.add('active');
+      tabGoogleSheetsBtn.classList.remove('active');
+      tabLocalViewerContent.style.display = 'block';
+      tabGoogleSheetsContent.style.display = 'none';
+      if (!sheetsTabsList.hasChildNodes()) {
+        loadSummary();
       }
-    });
+    }
   }
 
-  // Visual style toggle
-  let altTheme = false;
-  if (themeBtn) {
-    themeBtn.addEventListener('click', () => {
-      altTheme = !altTheme;
-      incrementRequests();
-      if (altTheme) {
-        document.documentElement.style.setProperty('--primary', '#ec4899');
-        document.documentElement.style.setProperty('--accent-cyan', '#8b5cf6');
-        appendLog('Paleta de colores cambiada a Neón Magenta & Violeta', 'THEME');
-      } else {
-        document.documentElement.style.setProperty('--primary', '#6366f1');
-        document.documentElement.style.setProperty('--accent-cyan', '#06b6d4');
-        appendLog('Paleta restaurada a VibeCode Indigo & Cyan', 'THEME');
+  tabGoogleSheetsBtn.addEventListener('click', () => switchTab('sheets'));
+  tabLocalViewerBtn.addEventListener('click', () => switchTab('local'));
+
+  // 2. Google Sheets URL Converter & Loader
+  function formatSheetsEmbedUrl(rawUrl) {
+    const trimmed = rawUrl.trim();
+    if (!trimmed) return '';
+
+    // If it's already an embed/pubhtml URL
+    if (trimmed.includes('/pubhtml') || trimmed.includes('/preview') || trimmed.includes('/htmlembed')) {
+      return trimmed;
+    }
+
+    // Extract sheet ID: /d/([a-zA-Z0-9_-]+)
+    const match = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+      const sheetId = match[1];
+      return `https://docs.google.com/spreadsheets/d/${sheetId}/pubhtml?widget=true&headers=false`;
+    }
+
+    // Fallback: use URL as-is
+    return trimmed;
+  }
+
+  function loadGoogleSheet(url) {
+    const embedUrl = formatSheetsEmbedUrl(url);
+    if (!embedUrl) return;
+
+    iframeLoading.classList.add('visible');
+    googleSheetsFrame.src = embedUrl;
+
+    // Remove loading overlay once loaded
+    googleSheetsFrame.onload = () => {
+      iframeLoading.classList.remove('visible');
+    };
+    setTimeout(() => {
+      iframeLoading.classList.remove('visible');
+    }, 4000);
+  }
+
+  btnApplySheetUrl.addEventListener('click', () => {
+    loadGoogleSheet(sheetsUrlInput.value);
+  });
+
+  sheetsUrlInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      loadGoogleSheet(sheetsUrlInput.value);
+    }
+  });
+
+  // Toggle instructions
+  btnToggleInstructions.addEventListener('click', () => {
+    instructionsPanel.classList.toggle('open');
+  });
+
+  // Toggle fullscreen embed
+  btnFullscreenEmbed.addEventListener('click', () => {
+    iframeWrapper.classList.toggle('fullscreen');
+    if (iframeWrapper.classList.contains('fullscreen')) {
+      btnFullscreenEmbed.textContent = '✕ Reducir';
+    } else {
+      btnFullscreenEmbed.textContent = '⛶ Expandir';
+    }
+  });
+
+  // 3. Load Excel Summary & KPIs
+  async function loadSummary() {
+    try {
+      const res = await fetch('/api/excel/summary');
+      const data = await res.json();
+
+      if (data.error) return;
+
+      // Fill KPIs
+      totalSalesValue.textContent = data.formattedSales || '$1,912,142,474';
+      totalRecordsValue.textContent = (data.totalTransactions || 95880).toLocaleString();
+      totalStoresValue.textContent = `${data.totalStores || 45} Sucursales`;
+
+      if (data.topDepartments && data.topDepartments.length > 0) {
+        const top1 = data.topDepartments[0];
+        topDeptValue.textContent = top1.name;
+        const pct = ((top1.sales / data.totalSales) * 100).toFixed(1);
+        topDeptSub.textContent = `$${(top1.sales / 1000000).toFixed(1)}M (${pct}% del total)`;
+
+        // Render Top Departments bars
+        renderDepartmentBars(data.topDepartments, data.totalSales);
       }
+
+      // Render Sheet Tabs
+      if (data.sheetNames && data.sheetNames.length > 0) {
+        renderSheetTabs(data.sheetNames);
+        currentSheet = data.sheetNames.includes('raw_departamento') ? 'raw_departamento' : data.sheetNames[0];
+        loadSheetData();
+      }
+    } catch (err) {
+      console.error('Error fetching summary:', err);
+    }
+  }
+
+  function renderDepartmentBars(topDepts, totalSales) {
+    deptsBarsContainer.innerHTML = '';
+    topDepts.forEach((dept) => {
+      const pct = Math.min(100, Math.max(5, (dept.sales / totalSales) * 100)).toFixed(1);
+      const formattedM = (dept.sales / 1000000).toFixed(2);
+
+      const row = document.createElement('div');
+      row.className = 'dept-bar-row';
+      row.innerHTML = `
+        <div class="dept-bar-labels">
+          <span class="dept-bar-name">${dept.name}</span>
+          <span class="dept-bar-val">$${formattedM}M (${pct}%)</span>
+        </div>
+        <div class="dept-progress-track">
+          <div class="dept-progress-fill" style="width: ${pct}%"></div>
+        </div>
+      `;
+      deptsBarsContainer.appendChild(row);
     });
   }
 
-  // Component generator snippet
-  const snippets = [
-    'CardComponent creado con éxito en components/Card.html',
-    'Hook useVibe() configurado para renderizado reactivo',
-    'Conexión WebSocket establecida con el backend local',
-    'Ruta REST /api/projects registrada en el enrutador'
-  ];
-  let snippetIndex = 0;
-  if (snippetBtn) {
-    snippetBtn.addEventListener('click', () => {
-      incrementRequests();
-      const item = snippets[snippetIndex % snippets.length];
-      snippetIndex++;
-      appendLog(item, 'GENERATOR');
+  function renderSheetTabs(sheetNames) {
+    sheetsTabsList.innerHTML = '';
+    sheetNames.forEach((name) => {
+      const chip = document.createElement('button');
+      chip.className = `sheet-tab-chip ${name === currentSheet ? 'active' : ''}`;
+      chip.textContent = name;
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.sheet-tab-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentSheet = name;
+        currentPage = 1;
+        currentSearch = '';
+        sheetSearchInput.value = '';
+        loadSheetData();
+      });
+      sheetsTabsList.appendChild(chip);
     });
   }
 
-  // Refresh stats
-  if (refreshStatsBtn) {
-    refreshStatsBtn.addEventListener('click', () => {
-      incrementRequests();
-      const randomLatency = Math.floor(Math.random() * 8) + 2;
-      latencyEl.textContent = `${randomLatency} ms`;
-      appendLog(`Métricas actualizadas: Latencia ${randomLatency}ms, Memoria OK`, 'SYS');
+  // 4. Load Paginated Sheet Data
+  async function loadSheetData() {
+    sheetMetaInfo.textContent = `Cargando '${currentSheet}'...`;
+    try {
+      const url = `/api/excel/sheet?name=${encodeURIComponent(currentSheet)}&page=${currentPage}&limit=50&search=${encodeURIComponent(currentSearch)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.error) {
+        sheetMetaInfo.textContent = `Error: ${data.error}`;
+        return;
+      }
+
+      totalPages = data.totalPages || 1;
+      pageIndicator.textContent = `Página ${data.page} de ${totalPages}`;
+      sheetMetaInfo.textContent = `Hoja: ${data.sheetName} · ${data.totalRows.toLocaleString()} registros encontrados`;
+
+      btnPrevPage.disabled = data.page <= 1;
+      btnNextPage.disabled = data.page >= totalPages;
+
+      renderTable(data.headers, data.rows);
+    } catch (err) {
+      console.error('Error fetching sheet:', err);
+      sheetMetaInfo.textContent = 'Error al cargar datos de la hoja';
+    }
+  }
+
+  function renderTable(headers, rows) {
+    // Header
+    tableHead.innerHTML = '';
+    const trHead = document.createElement('tr');
+    headers.forEach((h, idx) => {
+      const th = document.createElement('th');
+      th.textContent = h !== undefined && h !== null && h !== '' ? h : `Columna ${idx + 1}`;
+      trHead.appendChild(th);
+    });
+    tableHead.appendChild(trHead);
+
+    // Body
+    tableBody.innerHTML = '';
+    if (!rows || rows.length === 0) {
+      const emptyTr = document.createElement('tr');
+      const emptyTd = document.createElement('td');
+      emptyTd.colSpan = Math.max(headers.length, 1);
+      emptyTd.textContent = 'No hay registros en esta página';
+      emptyTd.style.textAlign = 'center';
+      emptyTd.style.padding = '30px';
+      emptyTd.style.color = 'var(--text-dim)';
+      emptyTr.appendChild(emptyTd);
+      tableBody.appendChild(emptyTr);
+      return;
+    }
+
+    rows.forEach((row) => {
+      const tr = document.createElement('tr');
+      headers.forEach((_, colIdx) => {
+        const td = document.createElement('td');
+        const val = row[colIdx];
+        if (val === undefined || val === null || val === '') {
+          td.textContent = '-';
+          td.style.color = 'var(--text-dim)';
+        } else if (typeof val === 'number') {
+          td.textContent = Number.isInteger(val) ? val.toLocaleString() : val.toFixed(2);
+          td.style.fontFamily = 'var(--font-mono)';
+        } else {
+          td.textContent = String(val);
+        }
+        tr.appendChild(td);
+      });
+      tableBody.appendChild(tr);
     });
   }
+
+  // Pagination events
+  btnPrevPage.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      loadSheetData();
+    }
+  });
+
+  btnNextPage.addEventListener('click', () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      loadSheetData();
+    }
+  });
+
+  // Search input with debounce
+  sheetSearchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      currentSearch = e.target.value.trim();
+      currentPage = 1;
+      loadSheetData();
+    }, 350);
+  });
+
+  // Initialize summary on startup
+  loadSummary();
 });

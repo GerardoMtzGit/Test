@@ -7,7 +7,14 @@
     "start": "node server.js",
     "dev": "node server.js"
   },
-  "keywords": ["vibecode", "ai", "development"],
+  "keywords": [
+    "vibecode",
+    "ai",
+    "development"
+  ],
   "author": "GerardoMtzGit",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
 }
